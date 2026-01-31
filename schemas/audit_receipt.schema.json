@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MarketScar Audit Receipt",
+  "type": "object",
+  "required": ["id","timestamp_iso","previous_hash","diagnostic","policy_snapshot_id","action_requested","action_taken","decision_hash","signer_public_key","signature"],
+  "properties": {
+    "id":{"type":"string"},
+    "timestamp_iso":{"type":"string","format":"date-time"},
+    "previous_hash":{"type":"string"},
+    "diagnostic":{"type":"object"},
+    "policy_snapshot_id":{"type":"string"},
+    "action_requested":{"type":"string"},
+    "action_taken":{"type":"string","enum":["OPEN","THROTTLE","HARD_LOCK","OVERRIDE"]},
+    "decision_hash":{"type":"string"},
+    "signer_public_key":{"type":"string"},
+    "signature":{"type":"string"},
+    "metadata":{"type":"object"}
+  }
+}

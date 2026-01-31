@@ -1,0 +1,23 @@
+{
+  "generator": "generate_synthetic_data.py",
+  "random_seed": 42,
+  "generated_at": "2026-01-31T12:35:47.590194",
+  "num_records": 42528,
+  "num_skus": 500,
+  "num_customers": 2000,
+  "date_range": {
+    "start": "2009-12-01T00:35:05",
+    "end": "2010-12-08T23:18:53"
+  },
+  "schema": [
+    "Invoice",
+    "StockCode",
+    "Description",
+    "Quantity",
+    "InvoiceDate",
+    "Price",
+    "Customer ID",
+    "Country"
+  ],
+  "note": "SYNTHETIC DATA - Production must use real UCI Online Retail II dataset"
+}

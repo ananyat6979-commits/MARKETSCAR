@@ -1,0 +1,12 @@
+# Virtual env
+.venv/
+
+# Secrets
+.marketscar_keys/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/

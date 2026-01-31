@@ -1,0 +1,18 @@
+# MARKETSCAR Requirements - Phase 1
+# Data & Baseline Freezing
+
+# Core dependencies
+numpy==1.24.3
+pandas==2.0.3
+scipy==1.11.1
+
+# Testing
+unittest-xml-reporting==3.2.0
+
+# Future phases (commented for now)
+# boto3==1.28.25  # AWS Bedrock (Phase 6)
+# cryptography==41.0.3  # RSA signatures (Phase 5)
+# flask==2.3.2  # UI server (Phase 7)
+
+# Note: Versions pinned for reproducibility
+# NumPy/SciPy versions locked for deterministic RNG
