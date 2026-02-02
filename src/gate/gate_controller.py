@@ -1,3 +1,4 @@
+# src/gate/gate_controller.py
 """
 GateController - canonical enforcement wrapper.
 
@@ -11,7 +12,6 @@ Returns decision dict:
 
 import time
 from typing import Dict, Any, Optional
-from src.utils.canonical import canonical_bytes
 from src.infra.crypto_signer import CryptoSigner
 
 class GateController:
@@ -38,6 +38,7 @@ class GateController:
         """
         Execute a governed action (entrypoint).
         context may contain diagnostic values (e.g., {"jsd_global": 0.92})
+        Returns: {"action":..., "diagnostics":..., "receipt": {"payload":..., "signature": "<hex>"}}
         """
         diagnostics = {"jsd_global": float(context.get("jsd_global", 0.0))}
         action = self._decide(diagnostics)

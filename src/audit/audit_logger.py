@@ -1,10 +1,12 @@
-from __future__ import annotations
-import json, os
+# src/audit/audit_logger.py
+import json
+import os
 from src.utils.canonical import canonical_bytes
 
 class AuditLogger:
     """
     Simple append-only audit logger writing canonical JSON lines.
+    Each line is canonical JSON bytes followed by newline.
     """
 
     def __init__(self, log_path: str = "data/audit/decisions.log"):
@@ -13,11 +15,14 @@ class AuditLogger:
 
     def append(self, receipt: dict) -> None:
         b = canonical_bytes(receipt)
-        # append binary canonical bytes + newline
         with open(self.log_path, "ab") as fh:
             fh.write(b + b"\n")
             fh.flush()
-            os.fsync(fh.fileno())
+            try:
+                os.fsync(fh.fileno())
+            except Exception:
+                # best-effort on platforms that may not support fsync on files (e.g., some CI runners)
+                pass
 
     def read_all(self) -> list:
         if not os.path.exists(self.log_path):

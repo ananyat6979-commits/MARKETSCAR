@@ -1,24 +1,11 @@
 #!/usr/bin/env python3
-"""
-scripts/calibrate.py
-
-Minimal calibration runner used in CI and locally.
-- Reads the first N rows (rows arg) of the input CSV.
-- Calls compute_jsd_distribution(df, seed).
-- Computes the 95th and 99th percentiles.
-- Emits config/frozen_thresholds.json with metadata.
-
-This is deterministic and intentionally simple so CI is reproducible.
-Replace compute_jsd_distribution with the production KDE+JSD implementation later.
-"""
-#!/usr/bin/env python3
 # scripts/calibrate.py
+"""
+Deterministic calibrate script used in CI.
 
-# ensure repo root is on sys.path so `import src.*` works in CI/script-runner
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
+Usage:
+python scripts/calibrate.py --input data/raw/online_retail_II.csv --rows 1000 --seed 42 --out config/frozen_thresholds.json
+"""
 import argparse
 import json
 import os

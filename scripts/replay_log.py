@@ -7,8 +7,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 """
-scripts/replay_log.py
-
 Replay a JSONL canonical case through the ReplayEngine and GateController
 and assert the produced decision.action matches expectation.
 
@@ -43,7 +41,6 @@ def get_runtime_signer(priv_arg=None, pub_arg=None):
     priv = os.path.join(tmp, "dev_rsa.pem")
     pub = os.path.join(tmp, "dev_rsa.pub")
     write_ephemeral_rsa_keypair(priv, pub)
-    # Note: ephemeral keys live in tmpdir. Cleanup can be added if desired.
     return CryptoSigner(private_key_path=priv, public_key_path=pub)
 
 
@@ -79,7 +76,6 @@ def main():
     # For each event in the case: feed it to gate.execute_pricing_action with context
     last_decision = None
     for ev in events:
-        # expected case schema: { "timestamp": "...", "sku":"SKU-1", "price": 10.02, "inventory": 100, "ip":"1.2.3.4", "jsd_global": 0.0 }
         context = {"jsd_global": ev.get("jsd_global", 0.0)}
         payload = {"sku": ev.get("sku"), "price": ev.get("price")}
         decision = gc.execute_pricing_action("publish_price", payload, context=context)
