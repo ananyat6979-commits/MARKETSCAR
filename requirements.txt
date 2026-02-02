@@ -16,3 +16,4 @@ unittest-xml-reporting==3.2.0
 
 # Note: Versions pinned for reproducibility
 # NumPy/SciPy versions locked for deterministic RNG
+pytest
