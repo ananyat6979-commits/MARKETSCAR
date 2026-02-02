@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# scripts/replay_log.py
+
+# ensure repo root is on sys.path so `import src.*` works in CI/script-runner
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 """
 scripts/replay_log.py
 

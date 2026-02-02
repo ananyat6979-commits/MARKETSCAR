@@ -1,19 +1,32 @@
-name: CI
+name: marketscar-ci
 on: [push, pull_request]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with: 
-          python-version: "3.11"
-      - name: Install deps
-        run: pip install -r requirements.txt
-      - name: Verify baselines
-        run: python3 scripts/baseline_freezer.py --verify data/baselines/manifest.json
-      - name: Run calibration
-        run: python3 scripts/calibrate.py --sample 10000
-      - name: Run tests
-        run: pytest -q
+    - uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with: 
+        python-version: "3.10"
+    - name: Set PYTHONPATH to repo root
+      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Verify baseline manifest hash
+      run: |
+        python scripts/baseline_freezer.py --verify data/raw/online_retail_II.csv --manifest data/baselines/manifest.json
+    - name: Sample calibrate
+      run: |
+        python scripts/calibrate.py --input data/raw/online_retail_II.csv --rows 1000 --seed 42 --out config/frozen_thresholds.json
+    - name: Run tests
+      run: pytest -q
+    - name: Run replay checks
+      run: |
+        python scripts/replay_log.py --case replay-cases/benign.jsonl --expect-action OPEN
+        python scripts/replay_log.py --case replay-cases/adversarial.jsonl --expect-action THROTTLE
+    - name: Bench (optional)
+      run: python bench/latency_test.py

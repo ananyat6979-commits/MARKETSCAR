@@ -1,7 +1,10 @@
+import os
+import binascii
+from typing import Union
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
-import os, binascii, json
+from src.utils.canonical import canonical_bytes
 
 class CryptoSigner:
     """
