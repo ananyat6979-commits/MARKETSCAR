@@ -16,6 +16,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest
     - name: Verify baseline manifest hash
       run: |
         python scripts/baseline_freezer.py --verify data/raw/online_retail_II.csv --manifest data/baselines/manifest.json
