@@ -1,36 +1,44 @@
-from __future__ import annotations
+"""
+GateController - canonical enforcement wrapper.
+
+Returns decision dict:
+{
+  "action": "OPEN"|"THROTTLE"|"HARD_LOCK",
+  "diagnostics": {...},
+  "receipt": {"payload": {...}, "signature": "<hex>"}
+}
+"""
+
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from src.utils.canonical import canonical_bytes
 from src.infra.crypto_signer import CryptoSigner
 
 class GateController:
     """
-    Minimal GateController implementation for tests.
-    Real diagnostics will plug into `diagnostics` and thresholds.
+    Minimal GateController for deterministic tests.
+    Uses >= for threshold boundary checks (so threshold==0 forces lock).
     """
 
-    def __init__(self, signer: CryptoSigner | None = None, thresholds: Dict[str, float] | None = None):
+    def __init__(self, signer: Optional[CryptoSigner] = None, thresholds: Optional[Dict[str, float]] = None):
         self.signer = signer or CryptoSigner()
-        # default conservative thresholds (placeholders)
+        # Default thresholds (placeholders)
         self.thresholds = thresholds or {"jsd_global_95": 0.5, "jsd_global_99": 0.8}
 
     def _decide(self, diagnostics: Dict[str, float]) -> str:
-        """Deterministic policy: checks jsd_global against thresholds."""
+        """Use >= for decision boundaries (deterministic, explicit)."""
         jsd = float(diagnostics.get("jsd_global", 0.0))
-        if jsd > float(self.thresholds.get("jsd_global_99", 1e9)):
+        if jsd >= float(self.thresholds.get("jsd_global_99", 1e9)):
             return "HARD_LOCK"
-        if jsd > float(self.thresholds.get("jsd_global_95", 1e9)):
+        if jsd >= float(self.thresholds.get("jsd_global_95", 1e9)):
             return "THROTTLE"
         return "OPEN"
 
     def execute_pricing_action(self, action_type: str, payload: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Wrapper entrypoint for governed actions.
-        Returns a dict with keys: action, diagnostics, receipt
-        Receipt: { payload: {...}, signature: "<hex>" }
+        Execute a governed action (entrypoint).
+        context may contain diagnostic values (e.g., {"jsd_global": 0.92})
         """
-        # diagnostics should be computed from context; tests can set context["jsd_global"]
         diagnostics = {"jsd_global": float(context.get("jsd_global", 0.0))}
         action = self._decide(diagnostics)
 
@@ -42,9 +50,8 @@ class GateController:
             "diagnostics": diagnostics
         }
 
-        # canonicalize and sign
+        # Sign receipt payload (CryptoSigner accepts dict and will canonicalize)
         sig = self.signer.sign(receipt_payload)
         receipt = {"payload": receipt_payload, "signature": sig}
 
-        decision = {"action": action, "diagnostics": diagnostics, "receipt": receipt}
-        return decision
+        return {"action": action, "diagnostics": diagnostics, "receipt": receipt}

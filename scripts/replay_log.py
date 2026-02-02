@@ -18,16 +18,42 @@ python scripts/replay_log.py --case replay-cases/benign.jsonl --expect-action OP
 import argparse
 import json
 from pathlib import Path
+import os
+import tempfile
 
 from src.data.replay import ReplayEngine
 from src.gate.gate_controller import GateController
 from src.infra.crypto_signer import CryptoSigner
+from src.infra.keys import write_ephemeral_rsa_keypair
+
+
+def get_runtime_signer(priv_arg=None, pub_arg=None):
+    # 1) explicit paths
+    if priv_arg and pub_arg:
+        return CryptoSigner(private_key_path=priv_arg, public_key_path=pub_arg)
+
+    # 2) env paths
+    priv_env = os.getenv("DEV_PRIVATE_KEY_PATH")
+    pub_env = os.getenv("DEV_PUBLIC_KEY_PATH")
+    if priv_env and pub_env:
+        return CryptoSigner(private_key_path=priv_env, public_key_path=pub_env)
+
+    # 3) generate ephemeral keys in tmpdir
+    tmp = tempfile.mkdtemp(prefix="marketscar-keys-")
+    priv = os.path.join(tmp, "dev_rsa.pem")
+    pub = os.path.join(tmp, "dev_rsa.pub")
+    write_ephemeral_rsa_keypair(priv, pub)
+    # Note: ephemeral keys live in tmpdir. Cleanup can be added if desired.
+    return CryptoSigner(private_key_path=priv, public_key_path=pub)
+
 
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--case", required=True, help="Path to canonical replay jsonl")
     p.add_argument("--expect-action", required=True, help="Expected action (OPEN/THROTTLE/HARD_LOCK)")
     p.add_argument("--manifest-verify", action="store_true", help="Verify manifest (default disabled in demo)")
+    p.add_argument("--priv", help="Path to private key (optional)")
+    p.add_argument("--pub", help="Path to public key (optional)")
     return p.parse_args()
 
 def load_case(path):
@@ -46,8 +72,8 @@ def main():
 
     events = load_case(case_path)
 
-    # small deterministic signer (uses env keys if present)
-    signer = CryptoSigner()
+    # small deterministic signer (uses CLI args, env keys, or ephemeral keys)
+    signer = get_runtime_signer(priv_arg=args.priv, pub_arg=args.pub)
     gc = GateController(signer=signer, thresholds={"jsd_global_99": 0.99, "jsd_global_95": 0.5})
 
     # For each event in the case: feed it to gate.execute_pricing_action with context
