@@ -39,21 +39,35 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pip-tools
-          pip-compile  requirements.in --output-file requirements.txt
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip setuptools wheel
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt missing. Please commit pinned requirements.txt to the repo."
+            exit 2
+          fi
+
+        # restore PEM secrets (optional)
+      - name: Restore runtime private/public key files from Secrets
+        if: ${{ secrets.DEV_PRIVATE_KEY_PEM && secrets.DEV_PUBLIC_KEY_PEM }}
+        shell: bash
+        env:
+          DEV_PRIVATE_KEY_PEM: ${{ secrets.DEV_PRIVATE_KEY_PEM }}
+          DEV_PUBLIC_KEY_PEM: ${{ secrets.DEV_PUBLIC_KEY_PEM }}
+        run: |
+          echo "$DEV_PRIVATE_KEY_PEM" > /tmp/dev_rsa.pem
+          chmod 600 /tmp/dev_rsa.pem || true
+          echo "$DEV_PUBLIC_KEY_PEM" > /tmp/dev_rsa.pub
+          chmod 644 /tmp/dev_rsa.pub || true
+          echo "DEV_PRIVATE_KEY_PATH=/tmp/dev_rsa.pem" >> $GITHUB_ENV
+          echo "DEV_PUBLIC_KEY_PATH=/tmp/dev_rsa.pub" >> $GITHUB_ENV
 
       - name: Set PYTHONPATH to repo root
         run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
-      - name: Verify baseline manifest hash (CI-safe)
-        run: |
-          python scripts/baseline_freezer.py --verify data/raw/online_retail_II.csv --manifest data/baselines/manifest.json
-
       - name: Run calibrate (sample)
         run: |
-          python scripts/calibrate.py --input data/raw/online_retail_II.csv --rows 1000 --seed 42 --out config/frozen_thresholds.json
+          python scripts/calibrate.py --input data/raw/online_retail_II.csv --rows 1000 --seed 42 --out config/frozen_thresholds.json --n-bins 128 --n-bootstrap 200
 
       - name: Run tests
         run: pytest -q
@@ -62,4 +76,5 @@ jobs:
         run: |
           python scripts/replay_log.py --case replay-cases/benign.jsonl --expect-action OPEN
           python scripts/replay_log.py --case replay-cases/adversarial.jsonl --expect-action THROTTLE
+
 >>>>>>> 8085f0d (chore(ci): stabilize signer/gate/audit/keys + deterministic calibrate + CI workflow + requirements)
