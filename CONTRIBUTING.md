@@ -1,25 +1,53 @@
-CONTRIBUTING to MARKETSCAR
-=========================
+Thanks for helping improve MARKETSCAR. This document explains how to run tests, format code, commit, and update dependencies.
 
-1. Code style
-   - Run `black .` before committing.
-   - Run `isort .` for import ordering.
+## Quickstart (local dev)
+1. Create virtualenv:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate   # bash / macOS
+   .venv\Scripts\Activate.ps1  # PowerShell (Windows)
+   ```
 
-2. Tests
-   - Add tests for new features under tests/
-   - Run `pytest -q` locally before pushing.
+2. Install pinned runtime deps:
+   ```bash
+   pip install --upgrade pip setuptools wheel
+   pip install -r requirements.txt
+   ```
 
-3. Pre-commit
-   - Install pre-commit: `pip install pre-commit`
-   - Run once to install hooks: `pre-commit install`
+3. Install developer tools:
+   ```bash
+   pip install pre-commit pytest
+   pre-commit install
+   ```
 
-4. Secrets and keys
-   - Never commit private keys (.pem) to the repo.
-   - Use `.secrets/` for local dev keys and add `.secrets` to `.gitignore`.
-   - Use `src/infra/keys.py` helpers to generate ephemeral keys for tests and CI.
+4. Run tests:
+   ```bash
+   pytest -q
+   ```
 
-5. Workflow
-   - Create a feature branch and open a PR against main.
-   - PR must pass CI (unit tests + calibration + replay checks) and be reviewed.
+5. Run pre-commit checks locally:
+   ```bash
+   pre-commit run --all-files
+   ```
 
-Thank you.
+## Formatting & Linting
+- Project enforces `black` (line-length: 79), `isort` (profile=black), and `flake8`.
+- Use `pre-commit run --all-files` to auto-format/lint before committing.
+- If `pre-commit` modifies files during commit, add and re-commit the changes.
+
+## Branches & commits
+- Branches: `feature/<short-desc>`, `fix/<short-desc>`, `chore/<short-desc>`.
+- Commit message style: `type(scope): short summary` example:
+  - `fix(diagnostic): fallback for degenerate KDE samples`
+  - `ci: pin workflow + run calibrate in CI`
+
+## Updating dependencies
+- Update dependencies locally, run your full test suite, then commit updated `requirements.txt`.
+- **Do not** run `pip-compile` in CI. Compile locally (if needed) and commit the pinned `requirements.txt`.
+
+## CI
+- CI expects a committed `requirements.txt` file. If tests require secrets (dev RSA keys), add them as GitHub Secrets and the workflow restores them into `/tmp`.
+
+If anything in the process is confusing or breaks, open a draft PR and tag `@ananyat6979-commits` (or leave a comment) — we'll help.
+
+Thank you!
