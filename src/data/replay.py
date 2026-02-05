@@ -27,7 +27,9 @@ from typing import Any, Dict, Iterator, Optional
 import pandas as pd
 
 # Paths
-PROJECT_ROOT = Path(__file__).parent.parent.parent  # src/data/ -> src/ -> project root
+PROJECT_ROOT = Path(
+    __file__
+).parent.parent.parent  # src/data/ -> src/ -> project root
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DIR = DATA_DIR / "raw"
 BASELINES_DIR = DATA_DIR / "baselines"
@@ -116,7 +118,9 @@ class ReplayEngine:
 
         # Load manifest
         if not self.manifest_path.exists():
-            raise FileNotFoundError(f"Manifest not found: {self.manifest_path}")
+            raise FileNotFoundError(
+                f"Manifest not found: {self.manifest_path}"
+            )
 
         with open(self.manifest_path, "r") as f:
             manifest = json.load(f)
@@ -192,7 +196,9 @@ class ReplayEngine:
         # Reset index after filtering
         df = df.reset_index(drop=True)
 
-        print(f"Streaming {len(df):,} transactions at {speed_multiplier}x speed")
+        print(
+            f"Streaming {len(df):,} transactions at {speed_multiplier}x speed"
+        )
 
         events_streamed = 0
         self.playback_start_time = time.time()
@@ -214,14 +220,18 @@ class ReplayEngine:
             # Handle timing (if realtime mode)
             if realtime and prev_event_time is not None:
                 # Calculate time delta in original data
-                time_delta = (txn.invoice_date - prev_event_time).total_seconds()
+                time_delta = (
+                    txn.invoice_date - prev_event_time
+                ).total_seconds()
 
                 # Scale by speed multiplier
                 sleep_duration = time_delta / speed_multiplier
 
                 # Sleep if positive delay
                 if sleep_duration > 0:
-                    time.sleep(min(sleep_duration, 1.0))  # Cap at 1 second per event
+                    time.sleep(
+                        min(sleep_duration, 1.0)
+                    )  # Cap at 1 second per event
 
             prev_event_time = txn.invoice_date
 
@@ -236,7 +246,9 @@ class ReplayEngine:
 
         print(f"Stream complete: {events_streamed:,} events")
 
-    def get_window(self, end_date: datetime, window_days: int = 14) -> pd.DataFrame:
+    def get_window(
+        self, end_date: datetime, window_days: int = 14
+    ) -> pd.DataFrame:
         """
         Get a time window of data (for baseline comparison).
 
@@ -280,12 +292,16 @@ class ReplayEngine:
             price_spike = params.get("price_spike", 1.25)  # 25% increase
 
             # Pick random SKUs
-            sample_skus = self.df["StockCode"].sample(5, random_state=42).tolist()
+            sample_skus = (
+                self.df["StockCode"].sample(5, random_state=42).tolist()
+            )
 
             synthetic_txns = []
             for i in range(n_transactions):
                 sku = sample_skus[i % len(sample_skus)]
-                base_price = self.df[self.df["StockCode"] == sku]["Price"].mean()
+                base_price = self.df[self.df["StockCode"] == sku][
+                    "Price"
+                ].mean()
 
                 synthetic_txns.append(
                     {
@@ -308,12 +324,16 @@ class ReplayEngine:
             n_transactions = params.get("n_transactions", 100)
             price_drop = params.get("price_drop", 0.4)  # 60% drop
 
-            sample_skus = self.df["StockCode"].sample(20, random_state=42).tolist()
+            sample_skus = (
+                self.df["StockCode"].sample(20, random_state=42).tolist()
+            )
 
             synthetic_txns = []
             for i in range(n_transactions):
                 sku = sample_skus[i % len(sample_skus)]
-                base_price = self.df[self.df["StockCode"] == sku]["Price"].mean()
+                base_price = self.df[self.df["StockCode"] == sku][
+                    "Price"
+                ].mean()
 
                 synthetic_txns.append(
                     {

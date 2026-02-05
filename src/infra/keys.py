@@ -59,7 +59,9 @@ def generate_rsa_keypair(
     return str(priv_path), str(pub_path)
 
 
-def generate_ephemeral_keypair_bytes(key_size: int = 2048) -> Tuple[bytes, bytes]:
+def generate_ephemeral_keypair_bytes(
+    key_size: int = 2048,
+) -> Tuple[bytes, bytes]:
     key = rsa.generate_private_key(public_exponent=65537, key_size=key_size)
     priv_bytes = key.private_bytes(
         encoding=serialization.Encoding.PEM,

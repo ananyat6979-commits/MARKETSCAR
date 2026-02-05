@@ -47,7 +47,9 @@ def get_runtime_signer(priv_arg=None, pub_arg=None):
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--case", required=True, help="Path to canonical replay jsonl")
+    p.add_argument(
+        "--case", required=True, help="Path to canonical replay jsonl"
+    )
     p.add_argument(
         "--expect-action",
         required=True,
@@ -91,7 +93,9 @@ def main():
     for ev in events:
         context = {"jsd_global": ev.get("jsd_global", 0.0)}
         payload = {"sku": ev.get("sku"), "price": ev.get("price")}
-        decision = gc.execute_pricing_action("publish_price", payload, context=context)
+        decision = gc.execute_pricing_action(
+            "publish_price", payload, context=context
+        )
         last_decision = decision
 
     if last_decision is None:
@@ -105,7 +109,9 @@ def main():
         raise SystemExit(3)
 
     print(f"OK: case {case_path} produced expected action {expected}")
-    print("receipt signature present:", "signature" in last_decision["receipt"])
+    print(
+        "receipt signature present:", "signature" in last_decision["receipt"]
+    )
 
 
 if __name__ == "__main__":

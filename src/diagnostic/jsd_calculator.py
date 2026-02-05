@@ -15,12 +15,15 @@ Notes:
 - If scipy is available, uses gaussian_kde but will gracefully fallback if KDE fails.
 - Histogram fallback is deterministic and stable.
 """
-from typing import List, Optional
-import numpy as np
+
 import math
+from typing import List, Optional
+
+import numpy as np
 
 try:
     from scipy.stats import gaussian_kde  # type: ignore
+
     _HAVE_SCIPY = True
 except Exception:
     _HAVE_SCIPY = False
@@ -56,7 +59,9 @@ def _jsd_from_pmfs(p: np.ndarray, q: np.ndarray) -> float:
     return float(jsd / math.log2(2.0))
 
 
-def _histogram_pmf_from_edges(edges: np.ndarray, samples: np.ndarray) -> np.ndarray:
+def _histogram_pmf_from_edges(
+    edges: np.ndarray, samples: np.ndarray
+) -> np.ndarray:
     """
     Build a PMF over provided bin edges deterministically using np.histogram.
     edges: bin edges array (len = n_bins+1)
@@ -68,7 +73,9 @@ def _histogram_pmf_from_edges(edges: np.ndarray, samples: np.ndarray) -> np.ndar
     return _safe_normalize(mass)
 
 
-def _kde_pmf(grid_edges: np.ndarray, samples: np.ndarray, bw: Optional[float] = None) -> np.ndarray:
+def _kde_pmf(
+    grid_edges: np.ndarray, samples: np.ndarray, bw: Optional[float] = None
+) -> np.ndarray:
     """
     Return PMF estimates on grid using gaussian_kde if available and stable.
     If KDE raises or produces degenerate covariance (e.g. all samples identical),
@@ -146,7 +153,9 @@ def compute_jsd_distribution(
         raise TypeError("df must be a pandas.DataFrame")
 
     if price_col not in df.columns:
-        raise KeyError(f"price column '{price_col}' not found in DataFrame (cols: {list(df.columns)})")
+        raise KeyError(
+            f"price column '{price_col}' not found in DataFrame (cols: {list(df.columns)})"
+        )
 
     prices = df[price_col].dropna().astype(float).values
     if log_transform:

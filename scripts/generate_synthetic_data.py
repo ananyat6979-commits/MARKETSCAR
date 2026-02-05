@@ -150,7 +150,9 @@ def generate_transactions(
         invoice_counter += 1
 
         # Each invoice can have 1-5 line items
-        n_items = np.random.choice([1, 2, 3, 4, 5], p=[0.6, 0.2, 0.1, 0.07, 0.03])
+        n_items = np.random.choice(
+            [1, 2, 3, 4, 5], p=[0.6, 0.2, 0.1, 0.07, 0.03]
+        )
 
         # Select SKUs for this invoice (Zipf distribution - some SKUs very popular)
         zipf_weights = np.random.zipf(1.5, len(sku_codes))
@@ -178,7 +180,8 @@ def generate_transactions(
 
         for sku in selected_skus:
             quantity = np.random.choice(
-                [1, 2, 3, 4, 6, 12, 24], p=[0.50, 0.20, 0.12, 0.08, 0.05, 0.03, 0.02]
+                [1, 2, 3, 4, 6, 12, 24],
+                p=[0.50, 0.20, 0.12, 0.08, 0.05, 0.03, 0.02],
             )
 
             # Price with small variance (±5% from baseline)
@@ -219,7 +222,9 @@ def main():
     df = df.sort_values("InvoiceDate").reset_index(drop=True)
 
     print(f"Generated {len(df)} transaction records")
-    print(f"Date range: {df['InvoiceDate'].min()} to {df['InvoiceDate'].max()}")
+    print(
+        f"Date range: {df['InvoiceDate'].min()} to {df['InvoiceDate'].max()}"
+    )
     print(f"Unique SKUs: {df['StockCode'].nunique()}")
     print(f"Unique customers: {df['Customer ID'].nunique()}")
 

@@ -29,7 +29,10 @@ class GateController:
     ):
         self.signer = signer or CryptoSigner()
         # Default thresholds (placeholders)
-        self.thresholds = thresholds or {"jsd_global_95": 0.5, "jsd_global_99": 0.8}
+        self.thresholds = thresholds or {
+            "jsd_global_95": 0.5,
+            "jsd_global_99": 0.8,
+        }
 
     def _decide(self, diagnostics: Dict[str, float]) -> str:
         """Use >= for decision boundaries (deterministic, explicit)."""
@@ -41,7 +44,10 @@ class GateController:
         return "OPEN"
 
     def execute_pricing_action(
-        self, action_type: str, payload: Dict[str, Any], context: Dict[str, Any]
+        self,
+        action_type: str,
+        payload: Dict[str, Any],
+        context: Dict[str, Any],
     ) -> Dict[str, Any]:
         """
         Execute a governed action (entrypoint).
@@ -63,4 +69,8 @@ class GateController:
         sig = self.signer.sign(receipt_payload)
         receipt = {"payload": receipt_payload, "signature": sig}
 
-        return {"action": action, "diagnostics": diagnostics, "receipt": receipt}
+        return {
+            "action": action,
+            "diagnostics": diagnostics,
+            "receipt": receipt,
+        }

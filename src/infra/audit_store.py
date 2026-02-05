@@ -1,5 +1,9 @@
-import fcntl, json, os
+import fcntl
+import json
+import os
+
 from src.utils.canonical import canonical_bytes
+
 
 def append_receipt_atomic(path: str, receipt: dict):
     b = canonical_bytes(receipt)

@@ -15,7 +15,8 @@ def write_temp_keypair(priv_path, pub_path):
         serialization.NoEncryption(),
     )
     pub_bytes = key.public_key().public_bytes(
-        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
+        serialization.Encoding.PEM,
+        serialization.PublicFormat.SubjectPublicKeyInfo,
     )
     with open(priv_path, "wb") as fh:
         fh.write(priv_bytes)

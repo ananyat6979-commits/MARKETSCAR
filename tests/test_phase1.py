@@ -44,7 +44,9 @@ class TestBaselineHashing(unittest.TestCase):
                 "StockCode": ["SKU1", "SKU2", "SKU1"],
                 "Description": ["Product 1", "Product 2", "Product 1"],
                 "Quantity": [1, 2, 3],
-                "InvoiceDate": pd.date_range("2010-01-01", periods=3, freq="H"),
+                "InvoiceDate": pd.date_range(
+                    "2010-01-01", periods=3, freq="H"
+                ),
                 "Price": [10.0, 20.0, 10.0],
                 "Customer ID": [1001, 1002, 1001],
                 "Country": ["UK", "UK", "UK"],
@@ -92,7 +94,9 @@ class TestBaselineHashing(unittest.TestCase):
         tampered_hash = self._compute_hash(tampered_csv)
 
         self.assertNotEqual(
-            original_hash, tampered_hash, "Tampered data must produce different hash"
+            original_hash,
+            tampered_hash,
+            "Tampered data must produce different hash",
         )
 
     def test_bit_for_bit_reproducibility(self):
@@ -130,7 +134,9 @@ class TestReplayEngine(unittest.TestCase):
                 "StockCode": [f"SKU{i%10}" for i in range(100)],
                 "Description": [f"Product {i%10}" for i in range(100)],
                 "Quantity": [1] * 100,
-                "InvoiceDate": pd.date_range("2010-01-01", periods=100, freq="H"),
+                "InvoiceDate": pd.date_range(
+                    "2010-01-01", periods=100, freq="H"
+                ),
                 "Price": [float(i % 20 + 1) for i in range(100)],
                 "Customer ID": [1000 + (i % 20) for i in range(100)],
                 "Country": ["UK"] * 100,
@@ -156,7 +162,10 @@ class TestReplayEngine(unittest.TestCase):
                 "hash": hash_obj.hexdigest(),
             },
             "source": {"url": "TEST", "type": "test"},
-            "schema": {"columns": list(cls.test_data.columns), "validated": True},
+            "schema": {
+                "columns": list(cls.test_data.columns),
+                "validated": True,
+            },
             "statistics": {},
         }
 
@@ -187,7 +196,9 @@ class TestReplayEngine(unittest.TestCase):
         # Should raise error
         with self.assertRaises(ValueError) as context:
             engine = ReplayEngine(
-                self.test_csv, manifest_path=self.manifest_path, verify_hash=True
+                self.test_csv,
+                manifest_path=self.manifest_path,
+                verify_hash=True,
             )
 
         self.assertIn("TAMPERING", str(context.exception).upper())
@@ -227,7 +238,9 @@ class TestReplayEngine(unittest.TestCase):
         # Should contain transactions in range
         self.assertGreater(len(window), 0)
         self.assertTrue(all(window["InvoiceDate"] <= end_date))
-        self.assertTrue(all(window["InvoiceDate"] >= end_date - pd.Timedelta(days=1)))
+        self.assertTrue(
+            all(window["InvoiceDate"] >= end_date - pd.Timedelta(days=1))
+        )
 
     def test_adversarial_injection(self):
         """Test adversarial scenario injection"""
@@ -242,9 +255,13 @@ class TestReplayEngine(unittest.TestCase):
             params={"n_transactions": 20},
         )
 
-        self.assertEqual(len(spoof_df), 20, "Should generate 20 spoof transactions")
         self.assertEqual(
-            spoof_df["Customer ID"].iloc[0], 99999, "Should use synthetic customer ID"
+            len(spoof_df), 20, "Should generate 20 spoof transactions"
+        )
+        self.assertEqual(
+            spoof_df["Customer ID"].iloc[0],
+            99999,
+            "Should use synthetic customer ID",
         )
 
 
