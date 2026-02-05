@@ -1,0 +1,7 @@
+# requirements.in - top-level runtime deps (minimal)
+numpy
+pandas
+cryptography==40.0.2
+pytest
+scipy
+scikit-learn
