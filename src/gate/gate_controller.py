@@ -11,8 +11,10 @@ Returns decision dict:
 """
 
 import time
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from src.infra.crypto_signer import CryptoSigner
+
 
 class GateController:
     """
@@ -20,7 +22,11 @@ class GateController:
     Uses >= for threshold boundary checks (so threshold==0 forces lock).
     """
 
-    def __init__(self, signer: Optional[CryptoSigner] = None, thresholds: Optional[Dict[str, float]] = None):
+    def __init__(
+        self,
+        signer: Optional[CryptoSigner] = None,
+        thresholds: Optional[Dict[str, float]] = None,
+    ):
         self.signer = signer or CryptoSigner()
         # Default thresholds (placeholders)
         self.thresholds = thresholds or {"jsd_global_95": 0.5, "jsd_global_99": 0.8}
@@ -34,7 +40,9 @@ class GateController:
             return "THROTTLE"
         return "OPEN"
 
-    def execute_pricing_action(self, action_type: str, payload: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+    def execute_pricing_action(
+        self, action_type: str, payload: Dict[str, Any], context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Execute a governed action (entrypoint).
         context may contain diagnostic values (e.g., {"jsd_global": 0.92})
@@ -48,7 +56,7 @@ class GateController:
             "action_type": action_type,
             "payload": payload,
             "action": action,
-            "diagnostics": diagnostics
+            "diagnostics": diagnostics,
         }
 
         # Sign receipt payload (CryptoSigner accepts dict and will canonicalize)

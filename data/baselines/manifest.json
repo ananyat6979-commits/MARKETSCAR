@@ -1,17 +1,53 @@
 {
   "version": "1.0.0",
-  "frozen_at": "2026-02-01T12:00:00Z",
+  "frozen_at": "2026-02-02T10:10:17.102092",
   "file": {
     "name": "online_retail_II.csv",
-    "hash": "674C2E817FF525CE5945937CA41D2119CC26DF0A93CEB25225454728B85D0A53",
-    "rows": 42528
+    "path": "D:\\Code\\Projects\\DataAnalytics\\MARKETSCAR\\data\\raw\\online_retail_II.csv",
+    "size_bytes": 3309005,
+    "hash_algorithm": "sha256",
+    "hash": "674c2e817ff525ce5945937ca41d2119cc26df0a93ceb25225454728b85d0a53"
   },
   "source": {
     "url": "SYNTHETIC_DATA",
     "type": "synthetic",
-    "synthetic": true,
-    "purpose": "test_and_demo_only",
-    "note": "Phase 1 demo baseline (synthetic). Production requires running scripts/upgrade_to_production.sh with real UCI CSV."
+    "note": "Production deployment must use real UCI Online Retail II dataset"
   },
-  "signed_by": null
+  "schema": {
+    "columns": [
+      "Invoice",
+      "StockCode",
+      "Description",
+      "Quantity",
+      "InvoiceDate",
+      "Price",
+      "Customer ID",
+      "Country"
+    ],
+    "validated": true
+  },
+  "statistics": {
+    "num_records": 42528,
+    "num_unique_skus": 500,
+    "num_unique_customers": 2000,
+    "num_unique_countries": 10,
+    "date_range": {
+      "start": "2009-12-01 00:35:05",
+      "end": "2010-12-08 23:18:53"
+    },
+    "price_stats": {
+      "mean": 6.411309255079008,
+      "std": 7.1971109382495415,
+      "min": 0.33,
+      "max": 102.6,
+      "median": 4.52
+    },
+    "quantity_stats": {
+      "mean": 2.7166102332580886,
+      "std": 3.7794394671190092,
+      "min": 1,
+      "max": 24,
+      "median": 1.0
+    }
+  }
 }

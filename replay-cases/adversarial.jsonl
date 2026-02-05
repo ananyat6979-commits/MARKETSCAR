@@ -1,0 +1,3 @@
+{"timestamp":"2026-01-01T00:00:00Z","sku":"SKU-1","price":10.0,"inventory":100,"ip":"1.2.3.4"}
+{"timestamp":"2026-01-01T00:00:00Z","sku":"SKU-1","price":10.01,"inventory":100,"ip":"1.2.3.4"}
+{"timestamp":"2026-01-01T00:00:00Z","sku":"SKU-1","price":10.02,"inventory":100,"ip":"1.2.3.4"}

@@ -4,6 +4,7 @@
 # ensure repo root is on sys.path so `import src.*` works in CI/script-runner
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 """
@@ -15,9 +16,9 @@ python scripts/replay_log.py --case replay-cases/benign.jsonl --expect-action OP
 """
 import argparse
 import json
-from pathlib import Path
 import os
 import tempfile
+from pathlib import Path
 
 from src.data.replay import ReplayEngine
 from src.gate.gate_controller import GateController
@@ -47,11 +48,20 @@ def get_runtime_signer(priv_arg=None, pub_arg=None):
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--case", required=True, help="Path to canonical replay jsonl")
-    p.add_argument("--expect-action", required=True, help="Expected action (OPEN/THROTTLE/HARD_LOCK)")
-    p.add_argument("--manifest-verify", action="store_true", help="Verify manifest (default disabled in demo)")
+    p.add_argument(
+        "--expect-action",
+        required=True,
+        help="Expected action (OPEN/THROTTLE/HARD_LOCK)",
+    )
+    p.add_argument(
+        "--manifest-verify",
+        action="store_true",
+        help="Verify manifest (default disabled in demo)",
+    )
     p.add_argument("--priv", help="Path to private key (optional)")
     p.add_argument("--pub", help="Path to public key (optional)")
     return p.parse_args()
+
 
 def load_case(path):
     events = []
@@ -59,6 +69,7 @@ def load_case(path):
         for ln in fh:
             events.append(json.loads(ln.strip()))
     return events
+
 
 def main():
     args = parse_args()
@@ -71,7 +82,9 @@ def main():
 
     # small deterministic signer (uses CLI args, env keys, or ephemeral keys)
     signer = get_runtime_signer(priv_arg=args.priv, pub_arg=args.pub)
-    gc = GateController(signer=signer, thresholds={"jsd_global_99": 0.99, "jsd_global_95": 0.5})
+    gc = GateController(
+        signer=signer, thresholds={"jsd_global_99": 0.99, "jsd_global_95": 0.5}
+    )
 
     # For each event in the case: feed it to gate.execute_pricing_action with context
     last_decision = None
@@ -93,6 +106,7 @@ def main():
 
     print(f"OK: case {case_path} produced expected action {expected}")
     print("receipt signature present:", "signature" in last_decision["receipt"])
+
 
 if __name__ == "__main__":
     main()

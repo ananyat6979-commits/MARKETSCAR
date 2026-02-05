@@ -7,12 +7,12 @@ Provides:
 - write_ephemeral_rsa_keypair (alias for generate_rsa_keypair) for compatibility
 """
 
+import os
 from pathlib import Path
 from typing import Tuple
-import os
 
-from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 
 def generate_rsa_keypair(
@@ -29,7 +29,9 @@ def generate_rsa_keypair(
 
     if not overwrite:
         if priv_path.exists() or pub_path.exists():
-            raise FileExistsError("Key path already exists (use overwrite=True to replace)")
+            raise FileExistsError(
+                "Key path already exists (use overwrite=True to replace)"
+            )
 
     key = rsa.generate_private_key(public_exponent=65537, key_size=key_size)
 
@@ -72,5 +74,9 @@ def generate_ephemeral_keypair_bytes(key_size: int = 2048) -> Tuple[bytes, bytes
 
 
 # Backwards-compatible alias expected by some scripts/tests
-def write_ephemeral_rsa_keypair(priv_path: str, pub_path: str, key_size: int = 2048, overwrite: bool = True) -> Tuple[str, str]:
-    return generate_rsa_keypair(priv_path, pub_path, key_size=key_size, overwrite=overwrite)
+def write_ephemeral_rsa_keypair(
+    priv_path: str, pub_path: str, key_size: int = 2048, overwrite: bool = True
+) -> Tuple[str, str]:
+    return generate_rsa_keypair(
+        priv_path, pub_path, key_size=key_size, overwrite=overwrite
+    )

@@ -10,3 +10,15 @@ __pycache__/
 
 # VS Code
 .vscode/
+
+.secrets/
+data/baselines/*.pem
+config/*.pem
+
+# local secrets and ephemeral keys
+.secrets/
+temp/
+*.pem
+*.pub
+config/
+data/baselines/manifest.json

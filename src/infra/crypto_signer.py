@@ -12,16 +12,14 @@ Notes:
 - Private keys MUST NOT be committed to the repo.
 - Tests should generate ephemeral keys at runtime and point DEV_PRIVATE_KEY_PATH / DEV_PUBLIC_KEY_PATH at them.
 """
-import os
 import binascii
-from typing import Union, Optional
+import os
+from typing import Optional, Union
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.serialization import (
-    load_pem_private_key,
-    load_pem_public_key,
-)
+from cryptography.hazmat.primitives.serialization import (load_pem_private_key,
+                                                          load_pem_public_key)
 
 from src.utils.canonical import canonical_bytes
 
@@ -29,7 +27,11 @@ Payload = Union[bytes, bytearray, dict, object]
 
 
 class CryptoSigner:
-    def __init__(self, private_key_path: Optional[str] = None, public_key_path: Optional[str] = None):
+    def __init__(
+        self,
+        private_key_path: Optional[str] = None,
+        public_key_path: Optional[str] = None,
+    ):
         """
         If paths are not provided, environment variables DEV_PRIVATE_KEY_PATH and
         DEV_PUBLIC_KEY_PATH are used.

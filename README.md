@@ -244,16 +244,6 @@ Replace synthetic data by:
 
 ---
 
-## License
-
-[Specify license]
-
----
-
-## Contact
-
-[Project maintainer contact]
-
 ---
 
 ## Acknowledgments
@@ -261,3 +251,16 @@ Replace synthetic data by:
 - UCI Machine Learning Repository (Online Retail II dataset)
 - Amazon Bedrock (AI narration, Phase 6)
 - Constitution-driven execution methodology
+
+# GUIDANCE
+# CI SECRET USAGE (exact)
+# - Do NOT store private keys in the repository.
+# - For GitHub Actions use repository Secrets and pass them as file contents or environment variables.
+#   Example: add a secret named DEV_PRIVATE_KEY_PEM (PEM file content) and write it to /tmp/dev_rsa.pem at job start:
+#     - name: Restore private key
+#       run: echo "$DEV_PRIVATE_KEY_PEM" > /tmp/dev_rsa.pem && chmod 600 /tmp/dev_rsa.pem
+#       env:
+#         DEV_PRIVATE_KEY_PEM: ${{ secrets.DEV_PRIVATE_KEY_PEM }}
+#     - name: Set DEV_PRIVATE_KEY_PATH
+#       run: echo "DEV_PRIVATE_KEY_PATH=/tmp/dev_rsa.pem" >> $GITHUB_ENV
+# - For local dev use src/infra/keys.generate_rsa_keypair(...) to produce ephemeral keys.

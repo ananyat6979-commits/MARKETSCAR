@@ -1,7 +1,9 @@
 # src/audit/audit_logger.py
 import json
 import os
+
 from src.utils.canonical import canonical_bytes
+
 
 class AuditLogger:
     """
